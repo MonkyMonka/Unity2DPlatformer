@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7971b09432761849979747585866293, type: 3}
+  m_Name: MarioSettings
+  m_EditorClassIdentifier: 
+  GravityScale: 3.75
+  AirControl: 1
+  JumpForce: 26.5
+  JumpMaxHoldTimeWalking: 0.1525
+  JumpMaxHoldTimeRunning: 0.19125
+  JumpIncreasePerSegment: 0.0025
+  BounceForce: 40
+  MinWalkSpeed: 0.7
+  MaxWalkSpeed: 14
+  WalkAcceleration: 19.5
+  Deceleration: 42
+  DecelerationSkid: 64
+  MaxRunningMeter: 7
+  RunAcceleration: 27
+  RunSpeedPerSegment: 1.1
+  RunSegmentIncrementDuration: 0.2
+  RunSegmentDecrementDuration: 0.05

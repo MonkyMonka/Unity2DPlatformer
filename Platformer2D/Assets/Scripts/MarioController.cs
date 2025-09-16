@@ -4,37 +4,150 @@ using UnityEngine.InputSystem;
 
 public class MarioController : MonoBehaviour
 {
-    private new Rigidbody2D rigidbody;
+    private Mario mario;
+    private MarioMovement marioMovement;
+    private MarioState marioState;
 
-    private float direction;
-    private const float speed = 5.0f;
+    private InputAction MoveInputAction;
+    private InputAction RunInputAction;
+    private InputAction JumpInputAction;
+    private InputAction DuckInputAction;
+    private InputAction UpInputAction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        // Get the Mario, MarioMovement and MarioState components
+        mario = GetComponent<Mario>();
+        marioMovement = GetComponent<MarioMovement>();
+        marioState = GetComponent<MarioState>();
+
+        // Get the PlayerInput component and get the InputActions
+        PlayerInput input = GetComponent<PlayerInput>();
+        MoveInputAction = input.actions["Move"];
+        RunInputAction = input.actions["Run"];
+        JumpInputAction = input.actions["Jump"];
+        DuckInputAction = input.actions["Duck"];
+        UpInputAction = input.actions["Up"];
     }
 
-    private void FixedUpdate()
+    public float GetMoveValue()
     {
-        rigidbody.linearVelocity = new Vector2(direction * speed, rigidbody.linearVelocity.y);
+        return MoveInputAction.ReadValue<float>();
+    }
+
+    public bool IsRunPressed()
+    {
+        return RunInputAction.IsPressed();
+    }
+
+    public bool IsJumpPressed()
+    {
+        return JumpInputAction.IsPressed();
+    }
+
+    public bool IsDuckPressed()
+    {
+        return DuckInputAction.IsPressed();
+    }
+
+    public bool IsUpPressed()
+    {
+        return UpInputAction.IsPressed();
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        direction = context.ReadValue<float>();
+        if ((context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled))
+        {
+            float direction = context.ReadValue<float>();
 
-        if (direction < 0.0f)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = -1.0f;
-            transform.localScale = scale;
+            if (direction == 0.0f)
+            {
+                if (marioState.IsOnGround && marioState.State != EMarioState.Ducking)
+                {
+                    mario.ApplyStateChange(EMarioState.Idle);
+                }
+            }
+            else
+            {
+                if (marioState.IsOnGround)
+                {
+                    mario.ApplyStateChange(EMarioState.Walking);
+                }
+
+
+                if (direction < 0.0f)
+                {
+                    marioState.Direction = EMarioDirection.Left;
+
+                    Vector3 scale = transform.localScale;
+                    scale.x = -1.0f;
+                    transform.localScale = scale;
+                }
+                else if (direction > 0.0f)
+                {
+                    marioState.Direction = EMarioDirection.Right;
+
+                    Vector3 scale = transform.localScale;
+                    scale.x = 1.0f;
+                    transform.localScale = scale;
+                }
+            }
         }
-        else if (direction > 0.0f)
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = 1.0f;
-            transform.localScale = scale;
+            float value = context.ReadValue<float>();
+
+            if (value > 0.0f)
+            {
+                marioMovement.Jump();
+            }
+            else
+            {
+                marioMovement.StopJumping();
+            }
+        }
+    }
+
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled)
+        {
+            float value = context.ReadValue<float>();
+
+            if (value > 0.0f)
+            {
+                mario.Run();
+            }
+            else
+            {
+                mario.StopRunning();
+            }
+        }
+    }
+
+    public void OnDuck(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled)
+        {
+            float value = context.ReadValue<float>();
+
+            // TODO: Implement ducking
+        }
+    }
+
+    public void OnUp(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled)
+        {
+            float value = context.ReadValue<float>();
+
+            // TODO: Implement fortress doors (Final Project)
         }
     }
 }

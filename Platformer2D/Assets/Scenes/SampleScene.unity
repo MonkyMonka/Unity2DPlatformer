@@ -9871,6 +9871,9 @@ GameObject:
   - component: {fileID: 1804724247}
   - component: {fileID: 1804724252}
   - component: {fileID: 1804724251}
+  - component: {fileID: 1804724253}
+  - component: {fileID: 1804724254}
+  - component: {fileID: 1804724255}
   m_Layer: 0
   m_Name: Mario
   m_TagString: Untagged
@@ -9931,7 +9934,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b2283c04793bdb04e9c61b0af8e525ea, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -9940,7 +9943,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!212 &1804724249
 SpriteRenderer:
@@ -10065,11 +10068,112 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: fa7967a6-3972-4f8d-9212-b4db71f695d7
     m_ActionName: 'Player/Move[/Keyboard/rightArrow,/Keyboard/d,/Keyboard/leftArrow,/Keyboard/a]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1804724251}
+        m_TargetAssemblyTypeName: MarioController, Assembly-CSharp
+        m_MethodName: OnRun
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1eb734af-d9a8-4094-b066-de963495ae57
+    m_ActionName: 'Player/Run[/Keyboard/shift]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1804724251}
+        m_TargetAssemblyTypeName: MarioController, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1c11085e-9137-410b-84e8-497593ca5160
+    m_ActionName: 'Player/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1804724251}
+        m_TargetAssemblyTypeName: MarioController, Assembly-CSharp
+        m_MethodName: OnDuck
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c709bad1-3577-494d-b443-1976d268d163
+    m_ActionName: 'Player/Duck[/Keyboard/downArrow,/Keyboard/s]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1804724251}
+        m_TargetAssemblyTypeName: MarioController, Assembly-CSharp
+        m_MethodName: OnUp
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3e083b8c-18bb-4f89-9688-07481ba1beff
+    m_ActionName: 'Player/Up[/Keyboard/upArrow,/Keyboard/w]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1804724253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804724246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 038e7eeb4611af24c81ef064e6296155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1804724254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804724246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da1215649c6db6b4ba5ea42764b36686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1804724255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804724246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b63b7500d5e75154f95009375cd9f5dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: b3de11ecd11e8834f90b355c4afd5492, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
