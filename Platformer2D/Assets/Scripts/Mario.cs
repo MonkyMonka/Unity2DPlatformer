@@ -1,8 +1,11 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Mario : MonoBehaviour
 {
     public MarioSettings settings;
+
+    private Animator animator;
 
     private MarioController marioController;
     private MarioMovement marioMovement;
@@ -13,6 +16,8 @@ public class Mario : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = GetComponent<Animator>();
+
         marioController = GetComponent<MarioController>();
         marioMovement = GetComponent<MarioMovement>();
         marioState = GetComponent<MarioState>();
@@ -41,6 +46,8 @@ public class Mario : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateAnimator();
+
         // Ensure that the player isn't Dead
         if (marioState.State != EMarioState.Dead)
         {
@@ -70,6 +77,7 @@ public class Mario : MonoBehaviour
                         if (marioState.RunningMeter >= settings.MaxRunningMeter)
                         {
                             marioState.RunningMeter = settings.MaxRunningMeter;
+                            UpdateAnimator();
                         }
 
                         // Set the jump max time to factor in the running meter, running faster means Mario jumps higher and thus farther
@@ -77,7 +85,12 @@ public class Mario : MonoBehaviour
 
                         // Set character movement's max walk speed to factor in the running meter
                         marioMovement.MaxWalkSpeed = settings.MaxWalkSpeed + (marioState.RunningMeter * settings.RunSpeedPerSegment);
+
+                        // Set the flipbook's playback rate based on the running meter
+                        float playRate = 1.0f + marioState.RunningMeter * 0.75f;
+                        animator.speed = playRate;
                     }
+
                 }
             }
             else
@@ -104,6 +117,9 @@ public class Mario : MonoBehaviour
                             // Reset the Jump max time and the character's max walk speed to the walking default
                             marioMovement.JumpMaxHoldTime = settings.JumpMaxHoldTimeWalking;
                             marioMovement.MaxWalkSpeed = settings.MaxWalkSpeed;
+
+                            // Reset the flipbook's playback rate to 1.0f
+                            animator.speed = 1.0f;
                         }
                     }
                     else
@@ -113,6 +129,10 @@ public class Mario : MonoBehaviour
 
                         // Set character movement's max walk speed to factor in the running meter
                         marioMovement.MaxWalkSpeed = settings.MaxWalkSpeed + (marioState.RunningMeter * settings.RunSpeedPerSegment);
+
+                        // Set the flipbook's playback rate based on the running meter
+                        float playRate = 1.0f + marioState.RunningMeter * 0.75f;
+                        animator.speed = playRate;
                     }
                 }
             }
@@ -139,6 +159,9 @@ public class Mario : MonoBehaviour
         {
             marioMovement.CheckJumpApex = true;
         }
+
+        // Lastly, update the animator
+        UpdateAnimator();
     }
 
     public void Run()
@@ -199,6 +222,43 @@ public class Mario : MonoBehaviour
             else
             {
                 ApplyStateChange(EMarioState.Walking);
+            }
+        }
+    }
+
+    private void UpdateAnimator()
+    {
+        if (marioState.State == EMarioState.Idle || marioState.State == EMarioState.Ducking)
+        {
+            animator.Play("MarioSmallIdle");
+        }
+        else if (marioState.State == EMarioState.Walking)
+        {
+            if (marioMovement.IsSkidding() == false)
+            {
+                if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                {
+                    animator.Play("MarioSmallRun");
+                }
+                else
+                {
+                    animator.Play("MarioSmallWalk");
+                }
+            }
+            else
+            {
+                animator.Play("MarioSmallTurn");
+            }
+        }
+        else if (marioState.State == EMarioState.Jumping || marioState.State == EMarioState.Falling)
+        {
+            if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+            {
+                animator.Play("MarioSmallRunJump");
+            }
+            else
+            {
+                animator.Play("MarioSmallJump");
             }
         }
     }
