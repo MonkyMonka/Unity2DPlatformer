@@ -11,19 +11,26 @@ public enum EMarioState : byte
     Dead
 }
 
+public enum EMarioForm : byte
+{
+    Small,
+    Super
+}
+
 public enum EMarioDirection : byte
 {
     Right,
     Left
 }
 
-
 public class MarioState : MonoBehaviour
 {
     private EMarioState state = EMarioState.Idle;
+    private EMarioForm form = EMarioForm.Small;
     private EMarioDirection direction = EMarioDirection.Right;
 
     private int runningMeter = 0;
+    private float invincibilityTimer = 0.0f;
 
     private bool isRunning = false;
     private bool isOnGround = true;
@@ -32,6 +39,12 @@ public class MarioState : MonoBehaviour
     {
         get { return state; }
         set { state = value; }
+    }
+
+    public EMarioForm Form
+    {
+        get { return form; }
+        set { form = value; }
     }
 
     public EMarioDirection Direction
@@ -49,6 +62,17 @@ public class MarioState : MonoBehaviour
     {
         get { return runningMeter; }
         set { runningMeter = value; }
+    }
+
+    public float InvincibilityTimer
+    {
+        get { return invincibilityTimer; }
+        set { invincibilityTimer = value; }
+    }
+
+    public bool IsInvincible
+    {
+        get { return InvincibilityTimer > 0.0f; }
     }
 
     public bool IsRunning

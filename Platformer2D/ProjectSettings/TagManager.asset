@@ -7,6 +7,7 @@ TagManager:
   - Mario
   - Enemy
   - World
+  - Pickup
   layers:
   - Default
   - TransparentFX
@@ -14,12 +15,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Mario
+  - MarioInvincible
+  - EnemyDynamic
+  - EnemyStatic
+  - PickupDynamic
+  - PickupStatic
   - 
   - 
   - 

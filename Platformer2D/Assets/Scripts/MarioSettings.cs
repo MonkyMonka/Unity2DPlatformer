@@ -29,4 +29,9 @@ public class MarioSettings : ScriptableObject
     [Header("Dead")]
     public float DeadHoldTime = 1.5f;
     public float DeadForceY = 26.0f;
+
+    [Header("Invincibility")]
+    public float InvincibleTime = 1.5f;
+    public float InvincibleVisibilityDuration = 0.05f;
+
 }

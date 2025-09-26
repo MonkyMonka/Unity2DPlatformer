@@ -136,7 +136,14 @@ public class MarioController : MonoBehaviour
         {
             float value = context.ReadValue<float>();
 
-            // TODO: Implement ducking
+            if (value > 0.0f)
+            {
+                mario.Duck();
+            }
+            else
+            {
+                mario.StopDucking();
+            }
         }
     }
 

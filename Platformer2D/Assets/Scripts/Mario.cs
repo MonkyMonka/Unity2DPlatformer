@@ -5,17 +5,26 @@ public class Mario : MonoBehaviour
     public MarioSettings settings;
 
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private new CapsuleCollider2D collider;
 
     private MarioController marioController;
     private MarioMovement marioMovement;
     private MarioState marioState;
 
     private float runningSegmentTimer = 0.0f;
+    private float damagedTimer = 0.0f;
+
+    private float previousAnimatorSpeed = 1.0f;
+    private bool transformOrDamageAnimationIsRunning = false;
+    private bool isMarioShowing = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        collider = GetComponent<CapsuleCollider2D>();
 
         marioController = GetComponent<MarioController>();
         marioMovement = GetComponent<MarioMovement>();
@@ -53,11 +62,39 @@ public class Mario : MonoBehaviour
         // Ensure that the player isn't Dead
         if (marioState.State != EMarioState.Dead)
         {
+            if (transformOrDamageAnimationIsRunning)
+            {
+                return;
+            }
+
             // If Mario falls of the edge, he is no longer on the ground, the movement component 
             // catches this situation, update the IsOnGround value
             if (marioMovement.IsFalling() && marioState.IsOnGround)
             {
                 marioState.IsOnGround = false;
+            }
+
+            // Handle the situation where Mario is Invincible, this
+            // occurs right after Mario takes damage
+            if (marioState.IsInvincible)
+            {
+                marioState.InvincibilityTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
+
+                if (marioState.InvincibilityTimer <= 0.0f)
+                {
+                    marioState.InvincibilityTimer = 0.0f;
+                    gameObject.layer = LayerMask.NameToLayer("Mario");
+                    spriteRenderer.enabled = true;
+                }
+                else
+                {
+                    damagedTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
+                    if (damagedTimer <= 0.0f)
+                    {
+                        damagedTimer = settings.InvincibleVisibilityDuration;
+                        spriteRenderer.enabled = !spriteRenderer.enabled;
+                    }
+                }
             }
 
             // Handle the situation where Mario is Running 
@@ -182,6 +219,7 @@ public class Mario : MonoBehaviour
         }
 
         // Assign the new state
+        EMarioState oldState = marioState.State;
         marioState.State = newState;
 
         if (newState == EMarioState.Jumping)
@@ -189,9 +227,56 @@ public class Mario : MonoBehaviour
             marioMovement.CheckJumpApex = true;
         }
 
-        // Lastly, update the animator
-        UpdateAnimator();
+        // Handle the duck resize and reposition when mario is big
+        if (marioState.Form == EMarioForm.Super)
+        {
+            if (newState == EMarioState.Ducking)
+            {
+                // Update the collider's size and offset 
+                collider.offset = new Vector2(-0.03f, 0.487f);
+                collider.size = new Vector2(0.765f, 0.93f);
+            }
+            else if (oldState == EMarioState.Ducking)
+            {
+                // Update the collider's size and offset
+                collider.offset = new Vector2(-0.03f, 0.85f);
+                collider.size = new Vector2(0.765f, 1.66f);
+            }
+        }
+            // Lastly, update the animator
+            UpdateAnimator();
     }
+
+    public void ApplyTransformChange(EMarioForm newForm)
+    {
+        // Ensure the new mario form is different than the current form
+        if (marioState.Form == newForm)
+        {
+            return;
+        }
+
+        // Assign the new form and then set the IsTransforming flag to true
+        EMarioForm oldForm = marioState.Form;
+        marioState.Form = newForm;
+
+        if (oldForm == EMarioForm.Small && newForm == EMarioForm.Super)
+        {
+            Game.Instance.PauseActors();
+
+            transformOrDamageAnimationIsRunning = true;
+            previousAnimatorSpeed = animator.speed;
+            animator.speed = 1.0f;
+            animator.Play("MarioTransform");
+        }
+        else if (oldForm == EMarioForm.Super && newForm == EMarioForm.Small)
+        {
+            transformOrDamageAnimationIsRunning = true;
+            previousAnimatorSpeed = animator.speed;
+            animator.speed = 1.0f;
+            animator.Play("MarioDamage");
+        }
+    }
+
 
     public void Run()
     {
@@ -214,11 +299,41 @@ public class Mario : MonoBehaviour
         runningSegmentTimer = 0.0f;
     }
 
+    public void Duck()
+    {
+        ApplyStateChange(EMarioState.Ducking);
+    }
+
+    public void StopDucking()
+    {
+        MarioController marioController = GetComponent<MarioController>();
+        if (marioController)
+        {
+            if (marioController.GetMoveValue() == 0.0f)
+            {
+                ApplyStateChange(EMarioState.Idle);
+            }
+            else
+            {
+                ApplyStateChange(EMarioState.Walking);
+            }
+        }
+    }
+
     public void HandleDamage()
     {
-        MarioHasDied(true);
+        if (marioState.Form == EMarioForm.Small)
+        {
+            MarioHasDied(true);
+        }
+        else if (marioState.Form == EMarioForm.Super)
+        {
+            damagedTimer = settings.InvincibleVisibilityDuration;
+            marioState.InvincibilityTimer = settings.InvincibleTime;
+            gameObject.layer = LayerMask.NameToLayer("MarioInvincible");
 
-        // This method will be expanded upon in future lessons
+            ApplyTransformChange(EMarioForm.Small);
+        }
     }
 
 
@@ -233,11 +348,25 @@ public class Mario : MonoBehaviour
                 PiranhaPlant piranhaPlant = collision.gameObject.GetComponent<PiranhaPlant>();
                 if (piranhaPlant.State != EPiranhaPlantState.Hiding)
                 {
-                    MarioHasDied(true);
+                    HandleDamage();
                 }
             }
         }
+        else if (collision.gameObject.CompareTag("Pickup"))
+        {
+            EPickupType pickupType = collision.gameObject.GetComponent<Pickup>().PickupType;
+
+            if (pickupType == EPickupType.Mushroom)
+            {
+                if (marioState.Form == EMarioForm.Small)
+                    ApplyTransformChange(EMarioForm.Super);
+            }
+
+            // Destroy the pickup gameObject
+            Destroy(collision.gameObject);
+        }
     }
+
 
     private void MarioHasDied(bool spawnDeadMario)
     {
@@ -298,38 +427,135 @@ public class Mario : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        if (marioState.State == EMarioState.Idle || marioState.State == EMarioState.Ducking)
+        // Don't update the animator if mario is transforming or damaged
+        if (transformOrDamageAnimationIsRunning)
         {
-            animator.Play("MarioSmallIdle");
+            return;
         }
-        else if (marioState.State == EMarioState.Walking)
+
+        if (marioState.Form == EMarioForm.Small)
         {
-            if (marioMovement.IsSkidding() == false)
+            if (marioState.State == EMarioState.Idle || marioState.State == EMarioState.Ducking)
             {
-                if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                animator.Play("MarioSmallIdle");
+            }
+            else if (marioState.State == EMarioState.Walking)
+            {
+                if (marioMovement.IsSkidding() == false)
                 {
-                    animator.Play("MarioSmallRun");
+                    if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                    {
+                        animator.Play("MarioSmallRun");
+                    }
+                    else
+                    {
+                        animator.Play("MarioSmallWalk");
+                    }
                 }
                 else
                 {
-                    animator.Play("MarioSmallWalk");
+                    animator.Play("MarioSmallTurn");
                 }
             }
-            else
+            else if (marioState.State == EMarioState.Jumping || marioState.State == EMarioState.Falling)
             {
-                animator.Play("MarioSmallTurn");
+                if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                {
+                    animator.Play("MarioSmallRunJump");
+                }
+                else
+                {
+                    animator.Play("MarioSmallJump");
+                }
             }
         }
-        else if (marioState.State == EMarioState.Jumping || marioState.State == EMarioState.Falling)
+        else if (marioState.Form == EMarioForm.Super)
         {
-            if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+            if (marioState.State == EMarioState.Idle)
             {
-                animator.Play("MarioSmallRunJump");
+                animator.Play("MarioSuperIdle");
             }
-            else
+            else if (marioState.State == EMarioState.Walking)
             {
-                animator.Play("MarioSmallJump");
+                if (marioMovement.IsSkidding() == false)
+                {
+                    if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                    {
+                        animator.Play("MarioSuperRun");
+                    }
+                    else
+                    {
+                        animator.Play("MarioSuperWalk");
+                    }
+                }
+                else
+                {
+                    animator.Play("MarioSuperTurn");
+                }
+            }
+            else if (marioState.State == EMarioState.Jumping)
+            {
+                if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                {
+                    animator.Play("MarioSuperRunJump");
+                }
+                else
+                {
+                    animator.Play("MarioSuperJump");
+                }
+            }
+            else if (marioState.State == EMarioState.Falling)
+            {
+                if (marioState.IsRunning && marioState.RunningMeter == settings.MaxRunningMeter)
+                {
+                    animator.Play("MarioSuperRunJump");
+                }
+                else
+                {
+                    animator.Play("MarioSuperJumpApex");
+                }
+            }
+            else if (marioState.State == EMarioState.Ducking)
+            {
+                animator.Play("MarioSuperDuck");
             }
         }
     }
+
+    private void EnabledMario(bool enabled)
+    {
+        if (enabled)
+        {
+
+        }
+    }
+
+    private void OnTransformAnimationFinished()
+    {
+        Game.Instance.UnpauseActors();
+
+        transformOrDamageAnimationIsRunning = false;
+        animator.speed = previousAnimatorSpeed;
+        previousAnimatorSpeed = 1.0f;
+
+        UpdateAnimator();
+
+        // Update the collider's size and offset
+        collider.offset = new Vector2(-0.03f, 0.85f);
+        collider.size = new Vector2(0.765f, 1.66f);
+    }
+
+    private void OnDamageAnimationFinished()
+    {
+        transformOrDamageAnimationIsRunning = false;
+        animator.speed = previousAnimatorSpeed;
+        previousAnimatorSpeed = 1.0f;
+
+        UpdateAnimator();
+
+        // Update the collider's size and offset
+        collider.offset = new Vector2(-0.03f, 0.487f);
+        collider.size = new Vector2(0.765f, 0.93f);
+    }
 }
+
