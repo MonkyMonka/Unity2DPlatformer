@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,7 +29,7 @@ public class MarioController : MonoBehaviour
         DuckInputAction = input.actions["Duck"];
         UpInputAction = input.actions["Up"];
     }
-
+    
     public float GetMoveValue()
     {
         return MoveInputAction.ReadValue<float>();

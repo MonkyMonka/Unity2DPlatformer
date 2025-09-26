@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 
@@ -10,7 +11,7 @@ public enum EPiranhaPlantState : byte
     AnimatingDown
 }
 
-public class PiranhaPlant : MonoBehaviour
+public class PiranhaPlant : Enemy
 {
     public PiranhaPlantSettings settings;
 
@@ -22,12 +23,15 @@ public class PiranhaPlant : MonoBehaviour
 
     public EPiranhaPlantState State
     {
-        get { return state; }
+        get { return state; } 
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Set the enemy type
+        enemyType = EEnemyType.PiranhaPlant;
+
         // Capture the starting location (hiding) and from that calculate the active (on-screen) location
         hidingLocation = transform.position;
         activeLocation = hidingLocation + new Vector2(0.0f, settings.PiranhaPlantOffsetY);
@@ -41,7 +45,7 @@ public class PiranhaPlant : MonoBehaviour
     {
         if (state == EPiranhaPlantState.Hiding)
         {
-            holdTimer -= Time.deltaTime;
+            holdTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
 
             if (holdTimer <= 0.0f)
             {
@@ -51,7 +55,7 @@ public class PiranhaPlant : MonoBehaviour
         }
         else if (state == EPiranhaPlantState.AnimatingUp)
         {
-            animationTimer -= Time.deltaTime;
+            animationTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
 
             float pct = 1.0f - (animationTimer / settings.PiranhaPlantAnimationDuration);
             float locationX = Mathf.Lerp(hidingLocation.x, activeLocation.x, pct);
@@ -66,7 +70,7 @@ public class PiranhaPlant : MonoBehaviour
         }
         else if (state == EPiranhaPlantState.Active)
         {
-            holdTimer -= Time.deltaTime;
+            holdTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
 
             if (holdTimer <= 0.0f)
             {
@@ -76,7 +80,7 @@ public class PiranhaPlant : MonoBehaviour
         }
         else if (state == EPiranhaPlantState.AnimatingDown)
         {
-            animationTimer -= Time.deltaTime;
+            animationTimer -= Time.deltaTime * Game.Instance.LocalTimeScale;
 
             float pct = 1.0f - (animationTimer / settings.PiranhaPlantAnimationDuration);
             float locationX = Mathf.Lerp(activeLocation.x, hidingLocation.x, pct);
@@ -114,7 +118,6 @@ public class PiranhaPlant : MonoBehaviour
                     SetState(EPiranhaPlantState.Hiding);
                     return;
                 }
-
 
                 animationTimer = settings.PiranhaPlantAnimationDuration;
             }

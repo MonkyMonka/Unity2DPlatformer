@@ -25,4 +25,8 @@ public class MarioSettings : ScriptableObject
     public float RunSpeedPerSegment = 1.1f;
     public float RunSegmentIncrementDuration = 0.2f;
     public float RunSegmentDecrementDuration = 0.05f;
+
+    [Header("Dead")]
+    public float DeadHoldTime = 1.5f;
+    public float DeadForceY = 26.0f;
 }

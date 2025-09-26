@@ -1,4 +1,3 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Mario : MonoBehaviour
@@ -48,6 +47,9 @@ public class Mario : MonoBehaviour
     {
         UpdateAnimator();
 
+        // Update the Movement component's local time scale
+        marioMovement.LocalTimeScale = Game.Instance.LocalTimeScale;
+
         // Ensure that the player isn't Dead
         if (marioState.State != EMarioState.Dead)
         {
@@ -64,7 +66,7 @@ public class Mario : MonoBehaviour
                 if (marioController.GetMoveValue() != 0.0f && marioState.IsOnGround)
                 {
                     // Increment the segment timer
-                    runningSegmentTimer += Time.deltaTime;
+                    runningSegmentTimer += Time.deltaTime * Game.Instance.LocalTimeScale;
 
                     // Is the segment timer greater than the duration constant?
                     if (runningSegmentTimer > settings.RunSegmentIncrementDuration)
@@ -90,7 +92,6 @@ public class Mario : MonoBehaviour
                         float playRate = 1.0f + marioState.RunningMeter * 0.75f;
                         animator.speed = playRate;
                     }
-
                 }
             }
             else
@@ -100,7 +101,7 @@ public class Mario : MonoBehaviour
                 if (marioState.RunningMeter > 0)
                 {
                     // Increment the segment timer
-                    runningSegmentTimer += Time.deltaTime;
+                    runningSegmentTimer += Time.deltaTime * Game.Instance.LocalTimeScale;
 
                     // Is the segment timer greater than the duration constant?
                     if (runningSegmentTimer > settings.RunSegmentDecrementDuration)
@@ -137,11 +138,39 @@ public class Mario : MonoBehaviour
                 }
             }
 
+            // Mario has fallen off the edge of the level and has died
+            if (transform.position.y < Game.Instance.Settings.DestroyActorAtY)
+            {
+                MarioHasDied(false);
+            }
+
             if (marioState.RunningMeter > 0)
             {
                 Debug.Log("Running meter: " + marioState.RunningMeter);
             }
         }
+    }
+
+    public void ResetMario(Vector2 location)
+    {
+        gameObject.SetActive(true);
+
+        transform.position = location;
+
+        if (marioState.State == EMarioState.Dead)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = 1.0f;
+            transform.localScale = scale;
+
+            marioState.Direction = EMarioDirection.Right;
+        }
+
+        // Set the state back to Idle
+        ApplyStateChange(EMarioState.Idle);
+
+        // Clear the movement forces
+        marioMovement.ClearAccumulatedForces();
     }
 
     public void ApplyStateChange(EMarioState newState)
@@ -183,6 +212,39 @@ public class Mario : MonoBehaviour
 
         // Reset the the Running segment timer to zero
         runningSegmentTimer = 0.0f;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            EEnemyType enemyType = collision.gameObject.GetComponent<Enemy>().EnemyType;
+
+            if (enemyType == EEnemyType.PiranhaPlant)
+            {
+                PiranhaPlant piranhaPlant = collision.gameObject.GetComponent<PiranhaPlant>();
+                if (piranhaPlant.State != EPiranhaPlantState.Hiding)
+                {
+                    MarioHasDied(true);
+                }
+            }
+        }
+    }
+
+    private void MarioHasDied(bool spawnDeadMario)
+    {
+        // Ensure that mario isn't dead
+        if (marioState.State != EMarioState.Dead)
+        {
+            // Set the state change to Dead
+            ApplyStateChange(EMarioState.Dead);
+
+            // Deactivate the gameObject
+            gameObject.SetActive(false);
+
+            // Spawn the Dead mario
+            Game.Instance.MarioHasDied(spawnDeadMario);
+        }
     }
 
     private void OnFalling()

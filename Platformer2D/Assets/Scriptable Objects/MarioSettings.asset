@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7971b09432761849979747585866293, type: 3}
+  m_Script: {fileID: 11500000, guid: 098a8a712d1617747990d453d76f896f, type: 3}
   m_Name: MarioSettings
   m_EditorClassIdentifier: 
   GravityScale: 3.75
@@ -24,8 +24,3 @@ MonoBehaviour:
   WalkAcceleration: 19.5
   Deceleration: 42
   DecelerationSkid: 64
-  MaxRunningMeter: 7
-  RunAcceleration: 27
-  RunSpeedPerSegment: 1.1
-  RunSegmentIncrementDuration: 0.2
-  RunSegmentDecrementDuration: 0.05

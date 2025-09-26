@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public enum EMarioState : byte
 {
     Idle,
@@ -15,6 +16,7 @@ public enum EMarioDirection : byte
     Right,
     Left
 }
+
 
 public class MarioState : MonoBehaviour
 {
