@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Mario
   - Enemy
+  - World
   layers:
   - Default
   - TransparentFX

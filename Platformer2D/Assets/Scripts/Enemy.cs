@@ -3,7 +3,8 @@ using UnityEngine;
 public enum EEnemyType : byte
 {
     Unknown,
-    PiranhaPlant
+    PiranhaPlant,
+    Goomba
 
         //TODO: Add additional EnemyType enumerators here
 }

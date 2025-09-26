@@ -18,9 +18,16 @@ MonoBehaviour:
   JumpMaxHoldTimeWalking: 0.1525
   JumpMaxHoldTimeRunning: 0.19125
   JumpIncreasePerSegment: 0.0025
-  BounceForce: 40
+  BounceForce: 20
   MinWalkSpeed: 0.7
   MaxWalkSpeed: 14
   WalkAcceleration: 19.5
   Deceleration: 42
   DecelerationSkid: 64
+  MaxRunningMeter: 7
+  RunAcceleration: 27
+  RunSpeedPerSegment: 1.1
+  RunSegmentIncrementDuration: 0.2
+  RunSegmentDecrementDuration: 0.05
+  DeadHoldTime: 1.5
+  DeadForceY: 26

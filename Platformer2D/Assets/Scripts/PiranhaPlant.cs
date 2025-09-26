@@ -13,7 +13,7 @@ public enum EPiranhaPlantState : byte
 
 public class PiranhaPlant : Enemy
 {
-    public PiranhaPlantSettings settings;
+    public EnemySettings settings;
 
     private EPiranhaPlantState state = EPiranhaPlantState.Unknown;
     private Vector2 hidingLocation = Vector2.zero;

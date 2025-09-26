@@ -214,6 +214,14 @@ public class Mario : MonoBehaviour
         runningSegmentTimer = 0.0f;
     }
 
+    public void HandleDamage()
+    {
+        MarioHasDied(true);
+
+        // This method will be expanded upon in future lessons
+    }
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
