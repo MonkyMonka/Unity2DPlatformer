@@ -84,7 +84,7 @@ public class Mario : MonoBehaviour
                 {
                     marioState.InvincibilityTimer = 0.0f;
                     gameObject.layer = LayerMask.NameToLayer("Mario");
-                    spriteRenderer.enabled = true;
+                    EnabledMario(true);
                 }
                 else
                 {
@@ -92,7 +92,8 @@ public class Mario : MonoBehaviour
                     if (damagedTimer <= 0.0f)
                     {
                         damagedTimer = settings.InvincibleVisibilityDuration;
-                        spriteRenderer.enabled = !spriteRenderer.enabled;
+                        isMarioShowing = !isMarioShowing;
+                        EnabledMario(isMarioShowing);
                     }
                 }
             }
@@ -243,8 +244,8 @@ public class Mario : MonoBehaviour
                 collider.size = new Vector2(0.765f, 1.66f);
             }
         }
-            // Lastly, update the animator
-            UpdateAnimator();
+        // Lastly, update the animator
+        UpdateAnimator();
     }
 
     public void ApplyTransformChange(EMarioForm newForm)
@@ -526,7 +527,11 @@ public class Mario : MonoBehaviour
     {
         if (enabled)
         {
-
+            spriteRenderer.color = Color.white;
+        }
+        else
+        {
+            spriteRenderer.color = Color.clear;
         }
     }
 
