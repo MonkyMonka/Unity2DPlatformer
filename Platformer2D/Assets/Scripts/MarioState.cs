@@ -29,6 +29,9 @@ public class MarioState : MonoBehaviour
     private EMarioForm form = EMarioForm.Small;
     private EMarioDirection direction = EMarioDirection.Right;
 
+
+    private int coins = 0;
+    private int lives = 1;
     private int runningMeter = 0;
     private float invincibilityTimer = 0.0f;
 
@@ -58,6 +61,17 @@ public class MarioState : MonoBehaviour
         get { return Direction == EMarioDirection.Left ? -1.0f : 1.0f; }
     }
 
+    public int Coins
+    {
+        get { return coins; }
+        set { coins = value; }
+    }
+
+    public int Lives
+    {
+        get { return lives; }
+        set { lives = value; }
+    }
     public int RunningMeter
     {
         get { return runningMeter; }

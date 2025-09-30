@@ -10,10 +10,14 @@ public class Game : MonoBehaviour
     public GameSettings settings;
     public GameObject marioGameObject;
     public GameObject deadMarioPrefab;
+    public GameObject mushroomPickupPrefab;
 
     private GameObject deadMario = null;
     private Vector2 marioSpawnLocation = Vector2.zero;
     private float localTimeScale = 1.0f;
+    private float timeRemaining = 0.0f;
+    private bool isGameOver = false;
+
 
     public GameSettings Settings
     {
@@ -50,6 +54,16 @@ public class Game : MonoBehaviour
         get { return localTimeScale; }
     }
 
+    public float TimeRemaining
+    {
+        get { return timeRemaining; }
+    }
+
+    public bool IsGameOver
+    {
+        get { return isGameOver; }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -65,6 +79,9 @@ public class Game : MonoBehaviour
 
         // Get Mario's spawn location
         marioSpawnLocation = marioGameObject.transform.position;
+
+        // Set the timeRemaining variable to the setting's default game duration
+        timeRemaining = settings.DefaultGameDuration;
     }
 
     // Update is called once per frame
@@ -81,6 +98,14 @@ public class Game : MonoBehaviour
 
                 GetMario.ResetMario(marioSpawnLocation);
             }
+        }
+        // Countdown the time remaining timer
+        timeRemaining -= Time.deltaTime;
+
+        if (timeRemaining < 0.0f)
+        {
+            timeRemaining = 0.0f;
+            GetMario.HandleDamage(true); // Mario is dead
         }
     }
 
@@ -140,14 +165,41 @@ public class Game : MonoBehaviour
 
     public void MarioHasDied(bool spawnDeadMario)
     {
-        // Do we spawn dead mario or not?
-        if (spawnDeadMario)
+        // Get Mario's player state and decrease the Lives value by one
+        MarioState marioState = GetMarioState;
+
+        if (marioState != null)
         {
-            SpawnDeadMario(marioGameObject.transform.position);
+            if (marioState.Lives > 0)
+            {
+                marioState.Lives--;
+
+                // Do we spawn dead mario or not?
+                if (spawnDeadMario)
+                {
+                    SpawnDeadMario(marioGameObject.transform.position);
+                }
+                else
+                {
+                    GetMario.ResetMario(marioSpawnLocation);
+                }
+            }
+            else
+            {
+                isGameOver = true;
+            }
         }
-        else
+    }
+
+
+
+    public void SpawnMushroomPickup(Vector2 location)
+    {
+        if (mushroomPickupPrefab != null)
         {
-            GetMario.ResetMario(marioSpawnLocation);
+            GameObject mushroomObject = Instantiate(mushroomPickupPrefab, new Vector3(location.x, location.y, 1.0f), Quaternion.identity);
+            MushroomPickup mushroomPickup = mushroomObject.GetComponent<MushroomPickup>();
+            mushroomPickup.Spawn();
         }
     }
 

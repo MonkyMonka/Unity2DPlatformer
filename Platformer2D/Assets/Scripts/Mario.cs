@@ -11,6 +11,7 @@ public class Mario : MonoBehaviour
     private MarioController marioController;
     private MarioMovement marioMovement;
     private MarioState marioState;
+    marioState.Lives = settings.DefaultStartingLives;
 
     private float runningSegmentTimer = 0.0f;
     private float damagedTimer = 0.0f;
@@ -321,9 +322,9 @@ public class Mario : MonoBehaviour
         }
     }
 
-    public void HandleDamage()
+    public void HandleDamage(bool forceDead = false)
     {
-        if (marioState.Form == EMarioForm.Small)
+        if (marioState.Form == EMarioForm.Small || forceDead)
         {
             MarioHasDied(true);
         }

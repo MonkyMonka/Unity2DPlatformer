@@ -133,6 +133,10 @@ public class Goomba : Enemy
                 flipMovementDirection = true;
             }
         }
+        else if (collision.gameObject.CompareTag("Pickup"))
+        {
+            flipMovementDirection = true;
+        }
 
         // DO we need to flip the Goomba's direction
         if (flipMovementDirection)

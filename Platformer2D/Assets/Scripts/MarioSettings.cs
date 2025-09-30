@@ -3,6 +3,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MarioSettings", menuName = "Mario/MarioSettings")]
 public class MarioSettings : ScriptableObject
 {
+    [Header("Lives")]
+    public int DefaultStartingLives = 4;
+
     [Header("Jump")]
     public float GravityScale = 3.75f;
     public float AirControl = 1.0f;
@@ -33,5 +36,4 @@ public class MarioSettings : ScriptableObject
     [Header("Invincibility")]
     public float InvincibleTime = 1.5f;
     public float InvincibleVisibilityDuration = 0.05f;
-
 }

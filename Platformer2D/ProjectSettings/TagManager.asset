@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - World
   - Pickup
+  - ItemBox
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - EnemyStatic
   - PickupDynamic
   - PickupStatic
-  - 
+  - ItemBox
   - 
   - 
   - 
