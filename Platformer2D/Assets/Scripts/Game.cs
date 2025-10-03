@@ -11,6 +11,7 @@ public class Game : MonoBehaviour
     public GameObject marioGameObject;
     public GameObject deadMarioPrefab;
     public GameObject mushroomPickupPrefab;
+    public GameObject itemBoxCoinPrefab;
 
     private GameObject deadMario = null;
     private Vector2 marioSpawnLocation = Vector2.zero;
@@ -200,6 +201,14 @@ public class Game : MonoBehaviour
             GameObject mushroomObject = Instantiate(mushroomPickupPrefab, new Vector3(location.x, location.y, 1.0f), Quaternion.identity);
             MushroomPickup mushroomPickup = mushroomObject.GetComponent<MushroomPickup>();
             mushroomPickup.Spawn();
+        }
+    }
+
+    public void SpawnItemBoxCoin(Vector2 location)
+    {
+        if (itemBoxCoinPrefab != null)
+        {
+            Instantiate(itemBoxCoinPrefab, new Vector3(location.x, location.y, 1.0f), Quaternion.identity);
         }
     }
 

@@ -3,7 +3,8 @@ using UnityEngine;
 public enum EPickupType : byte
 {
     Unknown,
-    Mushroom
+    Mushroom,
+    Coin
 }
 
 public enum EPickupState : byte

@@ -363,9 +363,13 @@ public class Mario : MonoBehaviour
                 if (marioState.Form == EMarioForm.Small)
                     ApplyTransformChange(EMarioForm.Super);
             }
+            else if (pickupType == EPickupType.Coin)
+            {
+                marioState.Coins++;
+            }
 
-            // Destroy the pickup gameObject
-            Destroy(collision.gameObject);
+                // Destroy the pickup gameObject
+                Destroy(collision.gameObject);
         }
     }
 

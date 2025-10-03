@@ -13,9 +13,10 @@ public enum EItemBoxState : byte
 
 public enum EItemBoxContents : byte
 {
-    Mushroom
-
-    // TODO: Add additional ItemBox contents here
+    Mushroom,
+    Coin1,
+    Coin5,
+    Coin10
 }
 
 public class ItemBox : MonoBehaviour
@@ -29,6 +30,7 @@ public class ItemBox : MonoBehaviour
     private Vector2 target;
     private Vector2 original;
     private float animationTimer;
+    private int coinCount;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -68,7 +70,21 @@ public class ItemBox : MonoBehaviour
             if (animationTimer <= 0.0f)
             {
                 animationTimer = 0.0f;
-                SetState(EItemBoxState.Spawning);
+                if (IsCoinItemBox())
+                {
+                    if (CoinsLeft() > 0)
+                    {
+                        SetState(EItemBoxState.Active);
+                    }
+                    else
+                    {
+                        SetState(EItemBoxState.Inactive);
+                    }
+                }
+                else
+                {
+                    SetState(EItemBoxState.Spawning);
+                }
             }
         }
         else if (state == EItemBoxState.Spawning)
@@ -79,16 +95,61 @@ public class ItemBox : MonoBehaviour
 
     public bool IsEmpty()
     {
+        if (contents == EItemBoxContents.Coin1)
+        {
+            return coinCount >= 1;
+        }
+        else if (contents == EItemBoxContents.Coin5)
+        {
+            return coinCount >= 5;
+        }
+        else if (contents == EItemBoxContents.Coin10)
+        {
+            return coinCount >= 10;
+        }
+
         return state != EItemBoxState.Active;
+    }
+    private bool IsCoinItemBox()
+    {
+        return contents == EItemBoxContents.Coin1 || contents == EItemBoxContents.Coin5 || contents == EItemBoxContents.Coin10;
+    }
+
+    private int CoinsLeft()
+    {
+        if (contents == EItemBoxContents.Coin1)
+        {
+            return 1 - coinCount;
+        }
+        else if (contents == EItemBoxContents.Coin5)
+        {
+            return 5 - coinCount;
+        }
+        else if (contents == EItemBoxContents.Coin10)
+        {
+            return 10 - coinCount;
+        }
+
+        return 0;
     }
 
     private void SpawnPickup()
     {
         Vector2 location = transform.position;
 
-        if (contents == EItemBoxContents.Mushroom)
+        if (IsCoinItemBox())
         {
-            Game.Instance.SpawnMushroomPickup(location);
+            Game.Instance.SpawnItemBoxCoin(location);
+            coinCount++;
+
+            Game.Instance.GetMarioState.Coins++;
+        }
+        else
+        {
+            if (contents == EItemBoxContents.Mushroom)
+            {
+                Game.Instance.SpawnMushroomPickup(location);
+            }
         }
     }
 
@@ -104,7 +165,10 @@ public class ItemBox : MonoBehaviour
             }
             else if (state == EItemBoxState.AnimUp)
             {
-                animator.Play("ItemBoxInactive");
+                if (IsCoinItemBox() == false || (IsCoinItemBox() && CoinsLeft() <= 1))
+                {
+                    animator.Play("ItemBoxInactive");
+                }
 
                 original = transform.position;
                 start = original;
@@ -114,6 +178,11 @@ public class ItemBox : MonoBehaviour
             }
             else if (state == EItemBoxState.AnimDown)
             {
+                if (IsCoinItemBox() && CoinsLeft() > 0)
+                {
+                    SpawnPickup();
+                }
+
                 start = target;
                 target = original;
 
@@ -125,7 +194,10 @@ public class ItemBox : MonoBehaviour
             }
             else if (state == EItemBoxState.Inactive)
             {
-                SpawnPickup();
+                if (IsCoinItemBox() == false)
+                {
+                    SpawnPickup();
+                }
             }
         }
     }
