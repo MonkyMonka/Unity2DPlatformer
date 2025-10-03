@@ -11,7 +11,6 @@ public class Mario : MonoBehaviour
     private MarioController marioController;
     private MarioMovement marioMovement;
     private MarioState marioState;
-    marioState.Lives = settings.DefaultStartingLives;
 
     private float runningSegmentTimer = 0.0f;
     private float damagedTimer = 0.0f;
@@ -30,6 +29,7 @@ public class Mario : MonoBehaviour
         marioController = GetComponent<MarioController>();
         marioMovement = GetComponent<MarioMovement>();
         marioState = GetComponent<MarioState>();
+        marioState.Lives = settings.DefaultStartingLives;
 
         // Movement properties
         marioMovement.MinWalkSpeed = settings.MinWalkSpeed;
