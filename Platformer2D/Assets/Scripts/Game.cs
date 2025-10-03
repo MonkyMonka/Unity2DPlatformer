@@ -12,6 +12,7 @@ public class Game : MonoBehaviour
     public GameObject deadMarioPrefab;
     public GameObject mushroomPickupPrefab;
     public GameObject itemBoxCoinPrefab;
+    public GameObject breakableBlockBitPrefab;
 
     private GameObject deadMario = null;
     private Vector2 marioSpawnLocation = Vector2.zero;
@@ -192,7 +193,15 @@ public class Game : MonoBehaviour
         }
     }
 
-
+    public void SpawnBreakableBlockBits(Vector2 location, Vector2 impulse, EBreakableBlockBitType type)
+    {
+        if (breakableBlockBitPrefab != null)
+        {
+            GameObject breakableBlockBitObject = Instantiate(breakableBlockBitPrefab, new Vector3(location.x, location.y, -1.0f), Quaternion.identity);
+            BreakableBlockBit breakableBlockBit = breakableBlockBitObject.GetComponent<BreakableBlockBit>();
+            breakableBlockBit.Spawn(type, impulse);
+        }
+    }
 
     public void SpawnMushroomPickup(Vector2 location)
     {

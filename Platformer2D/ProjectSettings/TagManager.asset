@@ -9,6 +9,7 @@ TagManager:
   - World
   - Pickup
   - ItemBox
+  - BreakableBlock
   layers:
   - Default
   - TransparentFX

@@ -9405,6 +9405,7 @@ MonoBehaviour:
   deadMarioPrefab: {fileID: 6810450972784770281, guid: 57ff4287832f7e84c8a8ab81984d1d05, type: 3}
   mushroomPickupPrefab: {fileID: 3733820708552252122, guid: dfce7755df933814193b960632ccc57b, type: 3}
   itemBoxCoinPrefab: {fileID: 4689053246554776328, guid: 7a8b61587bc670544b7ae4318dc6e908, type: 3}
+  breakableBlockBitPrefab: {fileID: 8492494189609573612, guid: e611c00c96463ff41a541f290fb1ff8a, type: 3}
 --- !u!4 &1941876774
 Transform:
   m_ObjectHideFlags: 0
