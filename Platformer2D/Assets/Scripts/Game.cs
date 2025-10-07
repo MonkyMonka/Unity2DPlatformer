@@ -7,6 +7,8 @@ public class Game : MonoBehaviour
 {
     private static Game sInstance;
 
+    public MarioCamera marioCamera;
+
     public GameSettings settings;
     public GameObject marioGameObject;
     public GameObject deadMarioPrefab;
@@ -29,6 +31,10 @@ public class Game : MonoBehaviour
     public static Game Instance
     {
         get { return sInstance; }
+    }
+    public MarioCamera GetMarioCamera
+    {
+        get { return marioCamera; }
     }
 
     public GameObject MarioGameObject

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 813c21e019965b647a31d45d59072e28, type: 3}
+  m_Name: CameraSettings
+  m_EditorClassIdentifier: 
+  maxDeltaMovement: 32
+  numShakes: 080000000a0000000c000000
+  shakeDurations:
+  - 0.02
+  - 0.024
+  - 0.0275
+  horizontalShakeMinExtents:
+  - 0.01
+  - 0.02
+  - 0.03
+  horizontalShakeMaxExtents:
+  - 0.04
+  - 0.05
+  - 0.06
+  verticalShakeMinExtents:
+  - 0.025
+  - 0.04
+  - 0.06
+  verticalShakeMaxExtents:
+  - 0.075
+  - 0.095
+  - 0.115

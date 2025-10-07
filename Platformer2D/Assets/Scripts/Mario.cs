@@ -249,7 +249,7 @@ public class Mario : MonoBehaviour
         UpdateAnimator();
     }
 
-    public void ApplyTransformChange(EMarioForm newForm)
+    public void ApplyTransformChange(EMarioForm newForm, bool noAnimation = false)
     {
         // Ensure the new mario form is different than the current form
         if (marioState.Form == newForm)
@@ -261,21 +261,39 @@ public class Mario : MonoBehaviour
         EMarioForm oldForm = marioState.Form;
         marioState.Form = newForm;
 
-        if (oldForm == EMarioForm.Small && newForm == EMarioForm.Super)
+        if (noAnimation == false)
         {
-            Game.Instance.PauseActors();
+            if (oldForm == EMarioForm.Small && newForm == EMarioForm.Super)
+            {
+                Game.Instance.PauseActors();
 
-            transformOrDamageAnimationIsRunning = true;
-            previousAnimatorSpeed = animator.speed;
-            animator.speed = 1.0f;
-            animator.Play("MarioTransform");
+                transformOrDamageAnimationIsRunning = true;
+                previousAnimatorSpeed = animator.speed;
+                animator.speed = 1.0f;
+                animator.Play("MarioTransform");
+            }
+            else if (oldForm == EMarioForm.Super && newForm == EMarioForm.Small)
+            {
+                transformOrDamageAnimationIsRunning = true;
+                previousAnimatorSpeed = animator.speed;
+                animator.speed = 1.0f;
+                animator.Play("MarioDamage");
+            }
         }
-        else if (oldForm == EMarioForm.Super && newForm == EMarioForm.Small)
+        else
         {
-            transformOrDamageAnimationIsRunning = true;
-            previousAnimatorSpeed = animator.speed;
-            animator.speed = 1.0f;
-            animator.Play("MarioDamage");
+            if (marioState.Form == EMarioForm.Super)
+            {
+                // Update the collider's size and offset
+                collider.offset = new Vector2(-0.03f, 0.85f);
+                collider.size = new Vector2(0.765f, 1.66f);
+            }
+            else if (marioState.Form == EMarioForm.Small)
+            {
+                // Update the collider's size and offset
+                collider.offset = new Vector2(-0.03f, 0.487f);
+                collider.size = new Vector2(0.765f, 0.93f);
+            }
         }
     }
 
@@ -379,6 +397,10 @@ public class Mario : MonoBehaviour
         // Ensure that mario isn't dead
         if (marioState.State != EMarioState.Dead)
         {
+            if (marioState.Form == EMarioForm.Super)
+            {
+                ApplyTransformChange(EMarioForm.Small, true);
+            }
             // Set the state change to Dead
             ApplyStateChange(EMarioState.Dead);
 
